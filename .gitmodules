@@ -1,0 +1,6 @@
+[submodule "glbinding"]
+	path = glbinding
+	url = https://github.com/cginternals/glbinding
+[submodule "SDL"]
+	path = SDL
+	url = https://github.com/libsdl-org/SDL
