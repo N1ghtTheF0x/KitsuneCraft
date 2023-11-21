@@ -109,7 +109,7 @@ namespace N1ghtTheF0x::KitsuneCraft
     void OpenGL::clear()
     {
         gl::glClearColor(0,0,0,1.0f);
-        gl::glClear(gl::ClearBufferMask::GL_COLOR_BUFFER_BIT);
+        gl::glClear(gl::ClearBufferMask::GL_COLOR_BUFFER_BIT | gl::ClearBufferMask::GL_DEPTH_BUFFER_BIT);
     }
     void OpenGL::resize(int w,int h)
     {
