@@ -14,6 +14,7 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
     set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_SOURCE_DIR}/bin )
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
+add_subdirectory(glm)
 set(OPTION_BUILD_TOOLS OFF)
 set(OPTION_BUILD_EXAMPLES OFF)
 add_subdirectory(glbinding)
@@ -36,7 +37,7 @@ add_library(${LIB_NAME} STATIC
 )
 
 target_link_libraries(${LIB_NAME} PRIVATE SDL3-shared glbinding glbinding-aux)
-target_include_directories(${LIB_NAME} PUBLIC SDL/include glbinding/source/glbinding/include glbinding/source/glbinding-aux/include)
+target_include_directories(${LIB_NAME} PUBLIC SDL/include glbinding/source/glbinding/include glbinding/source/glbinding-aux/include glm/glm)
 
 add_executable(game main.cpp)
 target_link_libraries(game PRIVATE ${LIB_NAME})

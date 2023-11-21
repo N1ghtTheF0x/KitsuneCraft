@@ -2,6 +2,7 @@
 #include "sdl.hpp"
 
 #include <iostream>
+#include <gtc/matrix_transform.hpp>
 
 static SDL_Window *window = NULL;
 static SDL_Surface *surface = NULL;
@@ -13,6 +14,9 @@ static bool running = true;
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 #define WINDOW_TITLE "KitsuneCraft"
+
+static glm::mat4 trans(1.0f);
+static glm::mat4 proj;
 
 static int width()
 {
@@ -103,16 +107,18 @@ namespace N1ghtTheF0x::KitsuneCraft
     {
         _opengl.clear();
         _opengl.resize(width(),height());
+        proj = glm::perspective(glm::radians(45.0f),(float)(width()/height()),0.1f,1000.0f);
         float verts[] = {
             -0.5f, -0.5f, 0.0f,
             -0.5f, 0.5f, 0.0f,
             0.5f,  0.5f, 0.0f,
             0.5f, -0.5f, 0.0f
         };
-        float r = (float)rand()/RAND_MAX;
-        float g = (float)rand()/RAND_MAX;
-        float b = (float)rand()/RAND_MAX;
-        _opengl.setDiffuseColor(r,g,b);
+        trans = glm::rotate(trans,glm::radians(3.0f),glm::vec3(0,0,1));
+        _opengl.setDiffuseColor(1,0,0);
+        _opengl.setProjection(proj);
+        _opengl.setModel(trans);
+        _opengl.setView(glm::mat4(1.0f));
         _opengl.drawQuad(verts,sizeof(verts),4);
         SDL_GL_SwapWindow(window);
     }

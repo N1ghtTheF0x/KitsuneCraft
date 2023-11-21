@@ -1,6 +1,8 @@
 #ifndef __N1GHTTHEF0X_KITSUNECRAFT_OPENGL_HPP
 #define __N1GHTTHEF0X_KITSUNECRAFT_OPENGL_HPP
 
+#include <glm.hpp>
+
 namespace N1ghtTheF0x::KitsuneCraft
 {
     class OpenGL
@@ -10,6 +12,9 @@ namespace N1ghtTheF0x::KitsuneCraft
         unsigned int _vbo;
         unsigned int _vao;
         int _diffuse_rgba_loc;
+        int _model_loc;
+        int _view_loc;
+        int _proj_loc;
     public:
         OpenGL();
         ~OpenGL();
@@ -21,6 +26,9 @@ namespace N1ghtTheF0x::KitsuneCraft
         void clear();
         void resize(int w,int h);
         void setDiffuseColor(float r,float g,float b,float a = 1.0f);
+        void setModel(glm::mat4 transform);
+        void setView(glm::mat4 transform);
+        void setProjection(glm::mat4 transform);
     };
 }
 

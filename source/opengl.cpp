@@ -5,6 +5,8 @@
 #include "shaders/fragment.hpp"
 
 #include <iostream>
+#include <gtc/matrix_transform.hpp>
+#include <gtc/type_ptr.hpp>
 
 static unsigned int compileShader(gl::GLenum type,const char* *source)
 {
@@ -59,6 +61,9 @@ namespace N1ghtTheF0x::KitsuneCraft
         unsigned int fragmentShader = compileShader(gl::GL_FRAGMENT_SHADER,f);
         _program = createProgram(fragmentShader,vertexShader);
         _diffuse_rgba_loc = gl::glGetUniformLocation(_program,"diffuse_rgba");
+        _model_loc = gl::glGetUniformLocation(_program,"model");
+        _view_loc = gl::glGetUniformLocation(_program,"view");
+        _proj_loc = gl::glGetUniformLocation(_program,"proj");
         gl::glDeleteShader(vertexShader);
         gl::glDeleteShader(fragmentShader);
 
@@ -114,5 +119,20 @@ namespace N1ghtTheF0x::KitsuneCraft
     {
         use();
         gl::glUniform4f(_diffuse_rgba_loc,r,g,b,a);
+    }
+    void OpenGL::setModel(glm::mat4 transform)
+    {
+        use();
+        gl::glUniformMatrix4fv(_model_loc,1,gl::GL_FALSE,glm::value_ptr(transform));
+    }
+    void OpenGL::setView(glm::mat4 transform)
+    {
+        use();
+        gl::glUniformMatrix4fv(_view_loc,1,gl::GL_FALSE,glm::value_ptr(transform));
+    }
+    void OpenGL::setProjection(glm::mat4 transform)
+    {
+        use();
+        gl::glUniformMatrix4fv(_proj_loc,1,gl::GL_FALSE,glm::value_ptr(transform));
     }
 }
