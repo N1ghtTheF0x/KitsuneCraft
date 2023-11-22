@@ -1,5 +1,4 @@
 #include "opengl.hpp"
-#include "sdl.hpp"
 
 #include "shaders/vertex.hpp"
 #include "shaders/fragment.hpp"
@@ -47,6 +46,67 @@ static unsigned int createProgram(unsigned int fShader,unsigned int vShader)
 
 namespace N1ghtTheF0x::KitsuneCraft
 {
+    bool Texture::load()
+    {
+        if(_surface != NULL)
+            SDL_DestroySurface(_surface);
+        auto img = IMG_Load(_path);
+        if(img == NULL)
+        {
+            std::cerr << "Couldn't load \"" << _path << "\": " << IMG_GetError() << std::endl;
+            SDL_DestroySurface(img);
+            return false;
+        }
+        _surface = SDL_CreateSurface(img->w,img->h,SDL_PIXELFORMAT_RGBA8888);
+        if(_surface == NULL)
+        {
+            std::cerr << "Couldn't create surface for \"" << _path << "\": " << SDL_GetError() << std::endl;
+            SDL_DestroySurface(img);
+            return false;
+        }
+        int result = SDL_BlitSurface(img,NULL,_surface,0);
+        if(result < 0)
+        {
+            std::cerr << "Couldn't copy \"" << _path << "\": " << SDL_GetError() << std::endl;
+            SDL_DestroySurface(img);
+            SDL_DestroySurface(_surface);
+            return false;
+        }
+        gl::glGenTextures(1,&_id);
+        bind();
+        gl::glTexImage2D(gl::GL_TEXTURE_2D,0,gl::GL_RGBA,_surface->w,_surface->h,0,(gl::GLenum)3,gl::GL_UNSIGNED_BYTE,_surface->pixels);
+        std::cout << "Loaded \"" << _path << "\" as " << _id << std::endl;
+        return true;
+    }
+    Texture::Texture(const char* path): _path(path)
+    {
+
+    }
+    Texture::~Texture()
+    {
+        SDL_DestroySurface(_surface);
+    }
+    Texture::operator SDL_Surface *() const
+    {
+        return _surface;
+    }
+    Texture::operator unsigned int() const
+    {
+        return _id;
+    }
+    void Texture::bind() const
+    {
+        gl::glBindTexture(gl::GL_TEXTURE_2D,_id);
+    }
+    void Texture::active() const
+    {
+        active(gl::GL_TEXTURE0);
+    }
+    void Texture::active(gl::GLenum tex) const
+    {
+        gl::glActiveTexture(tex);
+        bind();
+    }
     OpenGL::OpenGL()
     {
 
@@ -60,7 +120,12 @@ namespace N1ghtTheF0x::KitsuneCraft
         unsigned int vertexShader = compileShader(gl::GL_VERTEX_SHADER,v);
         unsigned int fragmentShader = compileShader(gl::GL_FRAGMENT_SHADER,f);
         _program = createProgram(fragmentShader,vertexShader);
+        // Fragment
         _diffuse_rgba_loc = gl::glGetUniformLocation(_program,"diffuse_rgba");
+        _diffuse_map_loc = gl::glGetUniformLocation(_program,"diffuse_map");
+        _tex_uv_loc = gl::glGetUniformLocation(_program,"tex_uv");
+        _has_diffuse_map_loc = gl::glGetUniformLocation(_program,"has_diffuse_map");
+        // Vertex
         _model_loc = gl::glGetUniformLocation(_program,"model");
         _view_loc = gl::glGetUniformLocation(_program,"view");
         _proj_loc = gl::glGetUniformLocation(_program,"proj");
@@ -92,6 +157,13 @@ namespace N1ghtTheF0x::KitsuneCraft
         gl::glBindVertexArray(_vao);
         gl::glDrawArrays(gl::GL_TRIANGLES,0,count);
     }
+    void OpenGL::drawTri(const Vertices &verts)
+    {
+        gl::glBindVertexArray(_vao);
+
+        gl::glBindBuffer(gl::GL_ARRAY_BUFFER,_vbo);
+        gl::glBufferData(gl::GL_ARRAY_BUFFER,
+    }
     void OpenGL::drawQuad(float *verts,size_t size,int count)
     {
         gl::glBindVertexArray(_vao);
@@ -119,6 +191,16 @@ namespace N1ghtTheF0x::KitsuneCraft
     {
         use();
         gl::glUniform4f(_diffuse_rgba_loc,r,g,b,a);
+    }
+    void OpenGL::setDiffuseTexture(const Texture &tex)
+    {
+        use();
+        gl::glUniform1ui(_diffuse_map_loc,tex);
+    }
+    void OpenGL::setTexUV(float u,float v)
+    {
+        use();
+        gl::glUniform2f(_tex_uv_loc,u,v);
     }
     void OpenGL::setModel(glm::mat4 transform)
     {

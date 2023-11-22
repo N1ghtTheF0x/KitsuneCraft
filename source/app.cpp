@@ -54,6 +54,7 @@ namespace N1ghtTheF0x::KitsuneCraft
 {
     static Camera camera;
     static Block block(0,0,0);
+    static Texture test("test.png");
     App::App()
     {
         _init_sdl();   
@@ -61,11 +62,13 @@ namespace N1ghtTheF0x::KitsuneCraft
     App::~App()
     {
         SDL_DestroyWindow(window);
+        IMG_Quit();
         SDL_Quit();
     }
     int App::run()
     {
         _create_window();
+        test.load();
         _loop(); 
         return 0;
     }
@@ -99,6 +102,10 @@ namespace N1ghtTheF0x::KitsuneCraft
         {
             std::cerr << "Couldn't init video: " << SDL_GetError() << std::endl;
             exit(EXIT_FAILURE);
+        }
+        if(IMG_Init(IMG_INIT_PNG) < 0)
+        {
+            std::cerr << "Couldn't load png loader: " << IMG_GetError() << std::endl;
         }
     }
     void App::_loop()
@@ -168,6 +175,8 @@ namespace N1ghtTheF0x::KitsuneCraft
             pos.y -= spd;
         camera.setPosition(pos);
 
+        // yaw += offsetMouseX();
+        // pitch += offsetMouseY();
         if(keyboard[SDLK_LEFT])
             yaw -= spd * 25;
         if(keyboard[SDLK_RIGHT])
@@ -184,6 +193,9 @@ namespace N1ghtTheF0x::KitsuneCraft
         _opengl.resize(width(),height());
         _opengl.setModel(glm::mat4(1.0f));
         _opengl.setView(camera.view());
+        //_opengl.setDiffuseTexture(test);
+        //_opengl.setTexUV(1,1);
+        //test.active();
         block.draw(_opengl);
         SDL_GL_SwapWindow(window);
     }

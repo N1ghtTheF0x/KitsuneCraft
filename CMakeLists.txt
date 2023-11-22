@@ -20,13 +20,13 @@ set(OPTION_BUILD_EXAMPLES OFF)
 add_subdirectory(glbinding)
 set(SDL_TEST_LIBRARY OFF)
 add_subdirectory(SDL)
+add_subdirectory(SDL_image)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-string(TOLOWER ${PROJECT_NAME} LIB_NAME)
-
-add_library(${LIB_NAME} STATIC
+add_executable(${PROJECT_NAME}
+    main.cpp
     source/app.cpp
     source/app.hpp
     source/sdl.hpp
@@ -40,9 +40,5 @@ add_library(${LIB_NAME} STATIC
     source/block.hpp
 )
 
-target_link_libraries(${LIB_NAME} PRIVATE SDL3-shared glbinding glbinding-aux)
-target_include_directories(${LIB_NAME} PUBLIC SDL/include glbinding/source/glbinding/include glbinding/source/glbinding-aux/include glm/glm)
-
-add_executable(game main.cpp)
-target_link_libraries(game PRIVATE ${LIB_NAME})
-target_include_directories(game PUBLIC source)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL3-shared SDL3_image-shared glbinding glbinding-aux)
+target_include_directories(${PROJECT_NAME} PUBLIC SDL/include SDL_image/include glbinding/source/glbinding/include glbinding/source/glbinding-aux/include glm/glm)
