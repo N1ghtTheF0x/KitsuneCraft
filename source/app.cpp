@@ -1,6 +1,7 @@
 #include "app.hpp"
 #include "sdl.hpp"
 #include "camera.hpp"
+#include "block.hpp"
 
 #include <iostream>
 #include <map>
@@ -52,6 +53,7 @@ static void setTitle(std::string title)
 namespace N1ghtTheF0x::KitsuneCraft
 {
     static Camera camera;
+    static Block block(0,0,0);
     App::App()
     {
         _init_sdl();   
@@ -144,8 +146,6 @@ namespace N1ghtTheF0x::KitsuneCraft
             setTitle(
                 std::string(WINDOW_TITLE).append(" ")
                 .append(std::to_string(60/delta).append(" "))
-                .append(std::to_string(delta)).append(" ")
-                .append(std::to_string(deltaTime)).append(" ")
                 .append(std::to_string(yaw)).append(".")
                 .append(std::to_string(pitch))
             );
@@ -182,42 +182,9 @@ namespace N1ghtTheF0x::KitsuneCraft
     {
         _opengl.clear();
         _opengl.resize(width(),height());
-        float verts[] = {
-            // Top
-            0.0f,1.0f,0.0f,
-            -1.0f,1.0f,-1.0f,
-            -1.0f,1.0f,1.0f,
-            1.0f,1.0f,1.0f,
-            // Bottom
-            1.0f,-1.0f,1.0f,
-            -1.0f,-1.0f,1.0f,
-            -1.0f,-1.0f,-1.0f,
-            1.0f,-1.0f,-1.0f,
-            // Front
-            1.0f,1.0f,1.0f,
-            -1.0f,1.0f,1.0f,
-            -1.0f,-1.0f,1.0f,
-            1.0f,-1.0f,1.0f,
-            // Back
-            1.0f,-1.0f,-1.0f,
-            -1.0f,-1.0f,-1.0f,
-            -1.0f,1.0f,-1.0f,
-            1.0f,1.0f,-1.0f,
-            // Left
-            -1.0f,1.0f,1.0f,
-            -1.0f,1.0f,-1.0f,
-            -1.0f,-1.0f,-1.0f,
-            -1.0f,-1.0f,1.0f,
-            // Right
-            1.0f,1.0f,-1.0f,
-            1.0f,1.0f,1.0f,
-            1.0f,-1.0f,1.0f,
-            1.0f,-1.0f,-1.0f,
-        };
-        _opengl.setDiffuseColor(1,0,0);
         _opengl.setModel(glm::mat4(1.0f));
         _opengl.setView(camera.view());
-        _opengl.drawQuad(verts,sizeof(verts),4*6);
+        block.draw(_opengl);
         SDL_GL_SwapWindow(window);
     }
 }

@@ -36,6 +36,8 @@ add_library(${LIB_NAME} STATIC
     source/shaders/fragment.hpp
     source/camera.cpp
     source/camera.hpp
+    source/block.cpp
+    source/block.hpp
 )
 
 target_link_libraries(${LIB_NAME} PRIVATE SDL3-shared glbinding glbinding-aux)
