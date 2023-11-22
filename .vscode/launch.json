@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cppvsdbg",
+            "name": "Launch Windows",
+            "request": "launch",
+            "cwd": "${workspaceRoot}\\bin",
+            "program": "${workspaceRoot}\\bin\\KitsuneCraft.exe",
+            "preLaunchTask": "Build"
+        }
+    ]
+}

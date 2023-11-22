@@ -46,6 +46,8 @@ namespace N1ghtTheF0x::KitsuneCraft
         };
     public:
         Vertex(float x,float y,float z) {_x = x;_y = y;_z = z;_r = _g = _b = _a = 1.0f;}
+        Vertex(float x,float y,float z,float red,float green,float blue,float alpha = 1.0f): Vertex(x,y,z) {_r = red;_g = green;_b = blue;_a = alpha;}
+        Vertex(float x,float y,float z,float red,float green,float blue,float alpha,float u,float v): Vertex(x,y,z,red,green,blue,alpha) {_u = u;_v = v;}
 
         float x() const {return _x;}
         float y() const {return _y;}
@@ -60,13 +62,20 @@ namespace N1ghtTheF0x::KitsuneCraft
         float v() const {return _v;}
 
         operator float*() const {return (float*)_fields;}
-        size_t size() const {return sizeof(_fields);}
 
         void setPosition(float x,float y,float z) {_x = x;_y = y;_z = z;}
         void setColor(float red,float green,float blue,float alpha = 1.0f) {_r = red;_g = green;_b = blue;_a = alpha;}
         void setTexCoords(float u,float v) {_u = u;_v = v;}
     };
     typedef std::vector<Vertex> Vertices;
+    static std::vector<float> prepareVertexArray(const Vertices &verts)
+    {
+        std::vector<float> arr;
+        for(auto &v : verts)
+        for(size_t i = 0;i < 9;i++)
+            arr.push_back(v[i]);
+        return arr;
+    }
     class OpenGL
     {
     private:
@@ -94,9 +103,7 @@ namespace N1ghtTheF0x::KitsuneCraft
         void drawQuad(const Vertices &verts);
         void clear();
         void resize(int w,int h);
-        void setDiffuseColor(float r,float g,float b,float a = 1.0f);
         void setDiffuseTexture(const Texture &tex);
-        void setTexUV(float u,float v);
         void setModel(glm::mat4 transform);
         void setView(glm::mat4 transform);
         void setProjection(glm::mat4 transform);

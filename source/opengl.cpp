@@ -4,8 +4,42 @@
 #include "shaders/fragment.hpp"
 
 #include <iostream>
+#include <exception>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
+
+float vertices[] = {
+    // positions          // colors           // texture coords
+    0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f, 1.0f,   1.0f, 1.0f, // top right
+    0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f, 1.0f,   1.0f, 0.0f, // bottom right
+    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f,   0.0f, 0.0f, // bottom left
+    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f, 1.0f,   0.0f, 1.0f  // top left 
+};
+
+auto a = sizeof(vertices);
+
+static void check_opengl()
+{
+    #define THROW(text) std::cerr << text << std::endl; throw std::exception(text);
+    auto code = gl::glGetError();
+    switch(code)
+    {
+        case gl::GL_INVALID_ENUM:
+            THROW("an enumeration parameter is not legal.");
+        case gl::GL_INVALID_VALUE:
+            THROW("a value parameter is not legal.");
+        case gl::GL_INVALID_OPERATION:
+            THROW("the state for a command is not legal for its given parameters.");
+        case gl::GL_STACK_OVERFLOW:
+            THROW("a stack pushing operation causes a stack overflow.");
+        case gl::GL_STACK_UNDERFLOW:
+            THROW("a stack popping operation occurs while the stack is at its lowest point.");
+        case gl::GL_OUT_OF_MEMORY:
+            THROW("a memory allocation operation cannot allocate (enough) memory.");
+        case gl::GL_INVALID_FRAMEBUFFER_OPERATION:
+            THROW("reading or writing to a framebuffer that is not complete.");
+    }
+}
 
 static unsigned int compileShader(gl::GLenum type,const char* *source)
 {
@@ -114,6 +148,8 @@ namespace N1ghtTheF0x::KitsuneCraft
     OpenGL::~OpenGL()
     {
         gl::glDeleteProgram(_program);
+        gl::glDeleteBuffers(1,&_vbo);
+        gl::glDeleteVertexArrays(1,&_vao);
     }
     void OpenGL::init(const char* *v,const char* *f)
     {
@@ -143,40 +179,63 @@ namespace N1ghtTheF0x::KitsuneCraft
     {
         gl::glUseProgram(_program);
     }
-    void OpenGL::drawTri(float *verts,size_t size,int count)
+    void OpenGL::drawTri(float *data,size_t size,int count)
     {
         gl::glBindVertexArray(_vao);
 
+        auto bufferSize = size * count * sizeof(float);
         gl::glBindBuffer(gl::GL_ARRAY_BUFFER,_vbo);
-        gl::glBufferData(gl::GL_ARRAY_BUFFER,size,verts,gl::GL_STATIC_DRAW);
+        gl::glBufferData(gl::GL_ARRAY_BUFFER,bufferSize,data,gl::GL_STATIC_DRAW);
 
-        gl::glVertexAttribPointer(0,3,gl::GL_FLOAT,gl::GL_FALSE,3 * sizeof(float),(void*)0);
+        gl::glVertexAttribPointer(0,3,gl::GL_FLOAT,gl::GL_FALSE,size * sizeof(float),(void*)0);
         gl::glEnableVertexAttribArray(0);
+
+        gl::glVertexAttribPointer(1,4,gl::GL_FLOAT,gl::GL_FALSE,size * sizeof(float),(void*)(3 * sizeof(float)));
+        gl::glEnableVertexAttribArray(1);
+
+        gl::glVertexAttribPointer(2,2,gl::GL_FLOAT,gl::GL_FALSE,size * sizeof(float),(void*)((3 + 4) * sizeof(float)));
+        gl::glEnableVertexAttribArray(2);
 
         use();
         gl::glBindVertexArray(_vao);
         gl::glDrawArrays(gl::GL_TRIANGLES,0,count);
+        check_opengl();
     }
-    void OpenGL::drawTri(const Vertices &verts)
+    void OpenGL::drawQuad(float *data,size_t size,int count)
     {
         gl::glBindVertexArray(_vao);
 
+        auto bufferSize = size * count * sizeof(float);
         gl::glBindBuffer(gl::GL_ARRAY_BUFFER,_vbo);
-        gl::glBufferData(gl::GL_ARRAY_BUFFER,
-    }
-    void OpenGL::drawQuad(float *verts,size_t size,int count)
-    {
-        gl::glBindVertexArray(_vao);
+        gl::glBufferData(gl::GL_ARRAY_BUFFER,bufferSize,data,gl::GL_STATIC_DRAW);
 
-        gl::glBindBuffer(gl::GL_ARRAY_BUFFER,_vbo);
-        gl::glBufferData(gl::GL_ARRAY_BUFFER,size,verts,gl::GL_STATIC_DRAW);
-
-        gl::glVertexAttribPointer(0,3,gl::GL_FLOAT,gl::GL_FALSE,3 * sizeof(float),(void*)0);
+        gl::glVertexAttribPointer(0,3,gl::GL_FLOAT,gl::GL_FALSE,size * sizeof(float),(void*)0);
         gl::glEnableVertexAttribArray(0);
+
+        gl::glVertexAttribPointer(1,4,gl::GL_FLOAT,gl::GL_FALSE,size * sizeof(float),(void*)(3 * sizeof(float)));
+        gl::glEnableVertexAttribArray(1);
+
+        gl::glVertexAttribPointer(2,2,gl::GL_FLOAT,gl::GL_FALSE,size * sizeof(float),(void*)((3 + 4) * sizeof(float)));
+        gl::glEnableVertexAttribArray(2);
 
         use();
         gl::glBindVertexArray(_vao);
         gl::glDrawArrays(gl::GL_QUADS,0,count);
+        check_opengl();
+    }
+    void OpenGL::drawQuad(const Vertices &verts)
+    {
+        auto size = 9;
+        auto data = prepareVertexArray(verts);
+        auto count = (int)verts.size(); // 4
+        drawQuad(data.data(),size,count);
+    }
+    void OpenGL::drawTri(const Vertices &verts)
+    {
+        auto size = 9;
+        auto data = prepareVertexArray(verts);
+        auto count = (int)verts.size();
+        drawTri(data.data(),size,count);
     }
     void OpenGL::clear()
     {
@@ -187,20 +246,10 @@ namespace N1ghtTheF0x::KitsuneCraft
     {
         gl::glViewport(0,0,w,h);
     }
-    void OpenGL::setDiffuseColor(float r,float g,float b,float a)
-    {
-        use();
-        gl::glUniform4f(_diffuse_rgba_loc,r,g,b,a);
-    }
     void OpenGL::setDiffuseTexture(const Texture &tex)
     {
         use();
         gl::glUniform1ui(_diffuse_map_loc,tex);
-    }
-    void OpenGL::setTexUV(float u,float v)
-    {
-        use();
-        gl::glUniform2f(_tex_uv_loc,u,v);
     }
     void OpenGL::setModel(glm::mat4 transform)
     {

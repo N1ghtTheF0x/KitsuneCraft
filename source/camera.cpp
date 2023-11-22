@@ -66,8 +66,6 @@ namespace N1ghtTheF0x::KitsuneCraft
     void Camera::setTarget(float yaw,float pitch)
     {
         glm::vec3 d;
-        _yaw = yaw;
-        _pitch = pitch;
         d.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
         d.y = sin(glm::radians(pitch));
         d.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));

@@ -1,46 +1,46 @@
 #include "block.hpp"
 
-static float block_top[] = {
+static N1ghtTheF0x::KitsuneCraft::Vertices block_top = {
     // Top
-    1.0f,1.0f,-1.0f,
-    -1.0f,1.0f,-1.0f,
-    -1.0f,1.0f,1.0f,
-    1.0f,1.0f,1.0f,
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,1.0f,-1.0f,   1.0f,0.0f,0.0f,1.0f,     1.0f,1.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,1.0f,-1.0f,   1.0f,0.0f,0.0f,1.0f,     1.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,1.0f,1.0f,   1.0f,0.0f,0.0f,1.0f,     0.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,1.0f,1.0f,   1.0f,0.0f,0.0f,1.0f,     0.0f,1.0f),
 };
-static float block_bottom[] = {
+static N1ghtTheF0x::KitsuneCraft::Vertices block_bottom = {
     // Bottom
-    1.0f,-1.0f,1.0f,
-    -1.0f,-1.0f,1.0f,
-    -1.0f,-1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,-1.0f,1.0f,   0.0f,1.0f,0.0f,1.0f,     1.0f,1.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,-1.0f,1.0f,   0.0f,1.0f,0.0f,1.0f,     1.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,-1.0f,-1.0f,   0.0f,1.0f,0.0f,1.0f,     0.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,-1.0f,-1.0f,   0.0f,1.0f,0.0f,1.0f,     0.0f,1.0f),
 };
-static float block_front[] = {
+static N1ghtTheF0x::KitsuneCraft::Vertices block_front = {
     // Front
-    1.0f,1.0f,1.0f,
-    -1.0f,1.0f,1.0f,
-    -1.0f,-1.0f,1.0f,
-    1.0f,-1.0f,1.0f,
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,1.0f,1.0f,   0.0f,0.0f,1.0f,1.0f,     1.0f,1.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,1.0f,1.0f,   0.0f,0.0f,1.0f,1.0f,     1.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,-1.0f,1.0f,   0.0f,0.0f,1.0f,1.0f,     0.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,-1.0f,1.0f,   0.0f,0.0f,1.0f,1.0f,     0.0f,1.0f),
 };
-static float block_back[] = {
+static N1ghtTheF0x::KitsuneCraft::Vertices block_back = {
     // Back
-    1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,1.0f,-1.0f,
-    1.0f,1.0f,-1.0f,
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,-1.0f,-1.0f,   1.0f,1.0f,0.0f,1.0f,     1.0f,1.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,-1.0f,-1.0f,   1.0f,1.0f,0.0f,1.0f,     1.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,1.0f,-1.0f,   1.0f,1.0f,0.0f,1.0f,     0.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,1.0f,-1.0f,   1.0f,1.0f,0.0f,1.0f,     0.0f,1.0f),
 };
-static float block_left[] = {
+static N1ghtTheF0x::KitsuneCraft::Vertices block_left = {
     // Left
-    -1.0f,1.0f,1.0f,
-    -1.0f,1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,1.0f,
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,1.0f,1.0f,   1.0f,0.0f,1.0f,1.0f,     1.0f,1.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,1.0f,-1.0f,   1.0f,0.0f,1.0f,1.0f,     1.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,-1.0f,-1.0f,   1.0f,0.0f,1.0f,1.0f,     0.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(-1.0f,-1.0f,1.0f,   1.0f,0.0f,1.0f,1.0f,     0.0f,1.0f),
 };
-static float block_right[] = {
+static N1ghtTheF0x::KitsuneCraft::Vertices block_right = {
     // Right
-    1.0f,1.0f,-1.0f,
-    1.0f,1.0f,1.0f,
-    1.0f,-1.0f,1.0f,
-    1.0f,-1.0f,-1.0f,
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,1.0f,-1.0f,   0.0f,1.0f,1.0f,1.0f,     1.0f,1.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,1.0f,1.0f,   0.0f,1.0f,1.0f,1.0f,     1.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,-1.0f,1.0f,   0.0f,1.0f,1.0f,1.0f,     0.0f,0.0f),
+    N1ghtTheF0x::KitsuneCraft::Vertex(1.0f,-1.0f,-1.0f,   0.0f,1.0f,1.0f,1.0f,     0.0f,1.0f),
 };
 
 namespace N1ghtTheF0x::KitsuneCraft
@@ -73,37 +73,29 @@ namespace N1ghtTheF0x::KitsuneCraft
     }
     void Block::draw(OpenGL &context)
     {
-        int count = 4;
-        auto size = sizeof(float) *  3 * count;
         if(enabledSide(Side::Top))
         {
-            context.setDiffuseColor(1,0,0);
-            context.drawQuad(block_top,size,count);
+            context.drawQuad(block_top);
         }
         if(enabledSide(Side::Bottom))
         {
-            context.setDiffuseColor(0,1,0);
-            context.drawQuad(block_bottom,size,count);
+            context.drawQuad(block_bottom);
         }
         if(enabledSide(Side::Front))
         {
-            context.setDiffuseColor(0,0,1);
-            context.drawQuad(block_front,size,count);
+            context.drawQuad(block_front);
         }
         if(enabledSide(Side::Back))
         {
-            context.setDiffuseColor(1,1,0);
-            context.drawQuad(block_back,size,count);
+            context.drawQuad(block_back);
         }
         if(enabledSide(Side::Left))
         {
-            context.setDiffuseColor(0,1,1);
-            context.drawQuad(block_left,size,count);
+            context.drawQuad(block_left);
         }
         if(enabledSide(Side::Right))
         {
-            context.setDiffuseColor(1,0,1);
-            context.drawQuad(block_right,size,count);
+            context.drawQuad(block_right);
         }
     }
 }

@@ -185,7 +185,8 @@ namespace N1ghtTheF0x::KitsuneCraft
             pitch += spd * 25;
         if(keyboard[SDLK_DOWN])
             pitch -= spd * 25;
-        camera.setTarget(yaw,pitch);
+        camera.setYaw(yaw);
+        camera.setPitch(pitch);
     }
     void App::_draw()
     {
@@ -193,9 +194,8 @@ namespace N1ghtTheF0x::KitsuneCraft
         _opengl.resize(width(),height());
         _opengl.setModel(glm::mat4(1.0f));
         _opengl.setView(camera.view());
-        //_opengl.setDiffuseTexture(test);
-        //_opengl.setTexUV(1,1);
-        //test.active();
+        _opengl.setDiffuseTexture(test);
+        test.active();
         block.draw(_opengl);
         SDL_GL_SwapWindow(window);
     }
