@@ -13,7 +13,8 @@ out vec2 tex_uv;
 
 void main()
 {
-    gl_Position = proj * view * model * vec4(a_position.x,a_position.y,a_position.z,1.0);
+    //gl_Position = proj * view * model * vec4(a_position,1.0);
+    gl_Position = vec4(a_position,1.0);
     diffuse_rgba = a_diffuse_rgba;
     tex_uv = a_tex_uv;
 }

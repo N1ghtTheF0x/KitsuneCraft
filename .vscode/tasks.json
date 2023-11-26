@@ -8,7 +8,18 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "label": "Build"
+            "label": "Build",
+            "dependsOn": "Create Shader Headers"
+        },
+        {
+            "type": "shell",
+            "label": "Create Shader Headers",
+            "windows": {
+                "command": "./shader.bat"
+            },
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
         }
     ]
 }
